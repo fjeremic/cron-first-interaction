@@ -1,0 +1,20 @@
+name: 'Cron First Interaction'
+description: 'An action for automatically commenting on pull requests from first-time contributors using a rate limit aware cron job.'
+author: 'Filip Jeremic'
+branding:
+  icon: 'message-square'
+  color: 'blue'
+inputs: 
+  repo-token:
+    description: 'The GITHUB_TOKEN secret'
+  pr-message:
+    description: 'Comment to post on an individual''s first pull request'
+  pr-label:
+    description: 'The label to apply to the pull request once the comment has been posted which will prevent the action from posting duplicate comments'
+    default: 'first contribution'
+  operations-per-run:
+    description: 'The maximum number of operations per run, used to control rate limiting'
+    default: 30
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
