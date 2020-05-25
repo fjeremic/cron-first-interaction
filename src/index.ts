@@ -109,7 +109,11 @@ async function isFirstPull(
     owner: github.context.repo.owner,
     repo: github.context.repo.repo,
     creator: sender,
-    state: "all"
+    state: "all",
+    sort: "created",
+    direction: "asc",
+    per_page: 100,
+    page: 1
   });
 
   if (status !== 200) {
@@ -119,10 +123,22 @@ async function isFirstPull(
   for (const issue of issues) {
     if (issue.number < prlNumber && issue.pull_request) {
       console.log(
-        `skipping pr #${prlNumber} because author has created ${issues.length} prs in the past`
+        `skipping pr #${prlNumber} because author ${sender} has created pr #${issue.number} in the past`
       );
       return false;
     }
+  }
+
+  // This is more of a safety guard because we don't want to support pagination within this function. There could be
+  // a case where some user has opened over 100 issues before opening up their first PR. Because the above fetches
+  // the first 100 issues or PRs sorted by date of creation in ascending order we may not be able to see this PR as
+  // it may be on the second page. We stay conserviative and in the case that a user has opened at least 10 issues or
+  // PRs we just bail out and assume they have contributed in the past.
+  if (issues.length > 10) {
+    console.log(
+      `skipping pr #${prlNumber} because author ${sender} has at least 10 issues or prs created so we are being conservative`
+    );
+    return false;
   }
 
   return true;

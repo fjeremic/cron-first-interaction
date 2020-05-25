@@ -32,7 +32,7 @@ jobs:
   triage:
     runs-on: ubuntu-latest
     steps:
-    - uses: fjeremic/cron-first-interaction@0.1.0
+    - uses: fjeremic/cron-first-interaction@0.2.0
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         pr-message: |-
